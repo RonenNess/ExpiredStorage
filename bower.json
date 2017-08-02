@@ -22,5 +22,5 @@
     "test",
     "tests"
   ],
-  "main": "dist/expired_storage.js",
+  "main": "dist/expired_storage.js"
 }

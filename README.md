@@ -14,15 +14,21 @@ expiredStorage = new ExpiredStorage();
 expiredStorage.setItem("some_key", "some_val", 60);	// <-- will expire after 60 seconds
 ```
 
-## Key Features
+## Install
 
-- Provide expiration time to localStorage or any class with similar API.
-- "Lazy" cleaning (eg. expired items removed only when you access them) or active cleanup of expired items by-demand.
-- Items written with the lib can still be accessed freely with the basic localStorage. Similarly, you can access items not created via the lib.
-- Test for items expiration, time left, or update expiration time for exiting keys.
-- You can set items without expiration that will behave normally.
-- Cross platform (should work on any browser with localStorage and NodeJs with custom storage).
-- Less than 3K when minified!
+npm:
+
+```
+npm install expired-storage
+```
+
+bower:
+
+```
+bower install expired-storage
+```
+
+or simply take the files from ```dist/``` (either minified or full) and include in any HTML page.
 
 
 ## Usage

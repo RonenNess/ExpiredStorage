@@ -5,7 +5,7 @@ Micro JS lib that provide local & session storage with expiration time.
 ## How it works
 
 The lib provide a single object that wraps localStorage (or any other class compatible with its API) and set items with additional key to store their expiration time.
-When fetching data from storage, the lib will check for expiration and remove the item if needed.
+When fetching data from storage, the lib will check for expiration and remove expired items.
 
 ## Key Features
 
@@ -14,15 +14,15 @@ When fetching data from storage, the lib will check for expiration and remove th
 - Items written with the lib can still be accessed freely with the basic localStorage. Similarly, you can access items not created via the lib.
 - Test for items expiration, time left, or update expiration time for exiting keys.
 - You can set items without expiration that will behave normally.
+- Cross platform (should work on any browser with localStorage and NodeJs with custom storage).
+- Less than 3K when minified!
 
-Basically you can replace your localStorage class with ExpiredStorage and use it normally. 
-Whenever you need items with expiration, simply provide a valid expiration time param.
 
 ## Usage
 
 Lets see how we use Expired Storage..
 
-#### Creating Expired Storage
+### Creating Expired Storage
 
 Create ExpiredStorage using the localStorage (default):
 
@@ -39,7 +39,7 @@ Or create with different type of storage ('storage' must implement the following
 expiredStorage = new ExpiredStorage(storage);
 ```
 
-#### Basics
+### Basics
 
 Set item with expiration time (in seconds):
 
@@ -48,7 +48,7 @@ Set item with expiration time (in seconds):
 expiredStorage.setItem("test", "foobar", 60);
 ```
 
-Set item without expiration time (will behave just like a normal storage item):
+Or you can set items without expiration time (in which case they will behave just like a normal storage item):
 
 ```js
 expiredStorage.setItem("no_expire", "this will live forever");
@@ -60,9 +60,9 @@ Fetch item (if expired, will remove it and return null):
 var item = expiredStorage.getItem("test");
 ```
 
-#### Extended API
+### Extended API
 
-Check if item expired, or how long it has left:
+ExpiredStorage comes with some extra functions:
 
 ```js
 // get object time to live (in seconds). this will not remove the item, even if expired:
@@ -70,40 +70,48 @@ var timeLeft = expiredStorage.getTimeLeft("test");
 
 // check if item is expired:
 var isExpired = expiredStorage.isExpired("test");
+
+// get list of keys (if includeExpired is true, will include expired keys that were not yet deleted)
+var keys = expiredStorage.keys(includeExpired);
 ```
 
-Update item expiration time (without changing its value):
+Plus, you can update item expiration time without changing its content:
 
 ```js
 // update "test" expiration time to be 100 seconds from current time.
 expiredStorage.updateExpiration("test", 100);
 ```
 
-#### Clear Items
+### Clear Items
 
-Actively clear all expired items:
+Normally expired items will be cleared from storage when you try to fetch them. 
+However, if you want initiate cleanup to clear all expired keys, you can use the following:
 
 ```js
 // remove all expired items and return a list with their keys
 var expiredKeys = expiredStorage.clearExpired();
 ```
 
-Or clear all keys from storage (including keys not created with Expired Storage):
+Or you can just clear everything, including keys that were not created with Expired Storage:
 
 ```js
 expiredStorage.clear();
 ```
 
-#### Custom Storage
+### Custom Storage
 
-You don't have to use localStorage / sessionStorage with ExpiredStorage.
+Expired Storage support any storage class that implements the following functions: getItem(), setItem(), removeItem(), clear().
+
 The following example shows how to create a custom storage class that uses dictionary internally, and use it with Expired Storage:
 
 ```js
 // create a custom storage class for testing
 var testStorage = {
 
+	// internal storage
     _storage: {},
+	
+	// basic API
     getItem: function(key) {
         return this._storage[key];
     },
@@ -116,6 +124,8 @@ var testStorage = {
     clear: function() {
         this._storage = {};
     },
+	
+	// you can implement keys() function that will be used to retrieve storage keys.
     keys: function() {
         var ret = [];
         for (var key in this._storage) {
@@ -127,7 +137,7 @@ var testStorage = {
     }
 };
 
-// use that storage with Expired Storage
+// use our custom storage with Expired Storage
 expiredStorage = new ExpiredStorage(testStorage);
 ```
 

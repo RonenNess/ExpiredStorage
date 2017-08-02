@@ -143,10 +143,10 @@
         },
 
         /**
-        * Get all keys in storage, not including internal keys used to store expiration.
-        * @param: includeExpired: if true, will also include expired keys.
-        * @return: Array with keys.
-        */
+         * Get all keys in storage, not including internal keys used to store expiration.
+         * @param: includeExpired: if true, will also include expired keys.
+         * @return: Array with keys.
+         */
         keys: function(includeExpired) {
             // create list to return
             var ret = [];
@@ -170,9 +170,9 @@
         },
 
         /**
-        * Iterate all keys in storage class.
-        * @param callback: Function to call for every key, with a single param: key.
-        */
+         * Iterate all keys in storage class.
+         * @param callback: Function to call for every key, with a single param: key.
+         */
         _iterKeys: function(callback) {
 
             // first check if storage define a 'keys()' function. if it does, use it
@@ -196,7 +196,7 @@
 
                 // first build keys array, so this function will be delete-safe (eg if callback remove keys it won't cause problems due to index change)
                 var keys = [];
-                for (var i = 0, len = this._storage.length; i < len; ++i ) {
+                for (var i = 0, len = this._storage.length; i < len; ++i) {
                     keys.push(this._storage.key(i));
                 }
                 // now actually iterate keys

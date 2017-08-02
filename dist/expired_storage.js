@@ -11,7 +11,7 @@
     function ExpiredStorage(storage) {
 
         // set default storage to localStorage
-        storage = storage || localStorage;
+        storage = storage || (typeof localStorage !== "undefined" ? localStorage : null);
 
         // sanity check1: make sure we have a valid storage class to use.
         if (!storage) {

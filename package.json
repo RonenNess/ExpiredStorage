@@ -1,0 +1,27 @@
+{
+  "name": "expired-storage",
+  "version": "1.0.0.0",
+  "description": "Micro JS lib that provide local & session storage with expiration time.",
+  "main": "dist/expired_storage.js",
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RonenNess/ExpiredStorage.git"
+  },
+  "keywords": [
+    "localStorage",
+	"sessionStorage",
+	"storage",
+    "expiration",
+    "expired",
+    "temporary"
+  ],
+  "author": "Ronen Ness",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RonenNess/ExpiredStorage/issues"
+  },
+  "homepage": "https://github.com/RonenNess/ExpiredStorage/"
+}

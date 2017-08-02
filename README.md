@@ -7,6 +7,13 @@ Micro JS lib that provide local & session storage with expiration time.
 The lib provide a single object that wraps localStorage (or any other class compatible with its API) and set items with additional key to store their expiration time.
 When fetching data from storage, the lib will check for expiration and remove expired items.
 
+Here's a quick example of using it:
+
+```js
+expiredStorage = new ExpiredStorage();
+expiredStorage.setItem("some_key", "some_val", 60);	// <-- will expire after 60 seconds
+```
+
 ## Key Features
 
 - Provide expiration time to localStorage or any class with similar API.

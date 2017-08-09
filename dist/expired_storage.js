@@ -84,6 +84,27 @@
         },
 
         /**
+        * Get item + metadata such as time left and if expired.
+        * Even if item expired, will not remove it.
+        * @param key: Item key to get (string).
+        * @return: Dictionary with: {value, timeLeft, isExpired}
+        */
+        peek: function(key) {
+
+            // get value and time left
+            var ret = {
+                value: this._storage.getItem(key),
+                timeLeft: this.getTimeLeft(key),
+            };
+
+            // set if expired
+            ret.isExpired = ret.timeLeft !== null && ret.timeLeft <= 0;
+
+            // return data
+            return ret;
+        },
+
+        /**
          * Get item time left to live.
          * @param key: Item key to get (string).
          * @return: Time left to expire (in seconds), or null if don't have expiration date.
@@ -140,6 +161,43 @@
 
             // return optional return code
             return ret;
+        },
+
+        /**
+         * Set a json serializable value. This basically calls JSON.stringify on 'val' before setting it.
+         * @param key: Item key to set (string).
+         * @param value: Value to store (object, will be stringified).
+         * @param expiration: Expiration time, in seconds. If not provided, will not set expiration time.
+         * @param return: Storage.setItem() return code.
+         **/
+        setJson: function(key, val, expiration)
+        {
+            // special case - make sure not undefined, because it would just write "undefined" and crash on reading.
+            if (val === undefined) {
+                throw new Error("Cannot set undefined value as JSON!");
+            }
+
+            // set stringified value
+            return this.setItem(key, JSON.stringify(val), expiration);
+        },
+
+        /**
+         * Get a json serializable value. This basically calls JSON.parse on the returned value.
+         * @param key: Item key to get (string).
+         * @return: Stored value, or undefined if not set / expired.
+         **/
+        getJson: function(key)
+        {
+            // get value
+            var val = this.getItem(key);
+
+            // if null, return null
+            if (val === null) {
+                return null;
+            }
+
+            // parse and return value
+            return JSON.parse(val);
         },
 
         /**
@@ -259,7 +317,7 @@
     };
 
     // add some api params
-    ExpiredStorage.version = "1.0.0.0";
+    ExpiredStorage.version = "1.0.2";
     ExpiredStorage.author = "Ronen Ness";
     ExpiredStorage.gitUrl = "https://github.com/RonenNess/ExpiredStorage";
 

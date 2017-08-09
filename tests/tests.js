@@ -39,7 +39,9 @@ var testStorage = {
 
     _storage: {},
     getItem: function(key) {
-        return this._storage[key];
+        var ret = this._storage[key];
+        if (ret === undefined) return null;
+        return ret;
     },
     setItem: function(key, val) {
         this._storage[key] = val;
@@ -127,6 +129,32 @@ for (var storageTypeKey in storageTypes) {
         });
 
 
+        // basic storage api without expiration (get, set, clear, remove, isExpired, getTimeLeft..)
+        QUnit.test( testsPrefix + "JSON get / set", function( assert ) {
+
+            // create expired storage
+            initTest();
+            expired = getStorage();
+
+            // test basic json set / get
+            var val = {a: 5, b:5*"a", c:null, d:undefined, e:"aa"};
+            var expected = JSON.parse(JSON.stringify(val));
+            expired.setJson("test", val);
+            assert.deepEqual(expired.getJson("test"), expected, "Make sure basic setJson and getJson works.");
+            expired.removeItem("test");
+            assert.equal(expired.getItem("test"), null, "Make sure basic removeItem works.");
+
+            // test json set / get with null, undefined etc.
+            expired.setJson("test", null);
+            assert.equal(expired.getJson("test"), null, "Make sure basic setJson and getJson works with null.");
+            assert.throws(function(){expired.setJson("test", undefined)}, "Make sure we can't set 'undefined' as JSON");
+
+            // clear
+            expired.clear();
+            assert.equal(expired.keys().length, 0, "Make sure clear items works.");
+        });
+
+
         // basic storage api with expiration time (get, set, clear, remove, isExpired, getTimeLeft..)
         QUnit.test( testsPrefix + "Basic API on items with expiration", function( assert ) {
 
@@ -139,14 +167,18 @@ for (var storageTypeKey in storageTypes) {
             assert.equal(expired.getItem("test"), "foo", "Make sure successfully got an item with not-yet expired time.");
             assert.equal(expired.getTimeLeft("test"), 10, "Test getTimeLeft on item with expiration time.");
             assert.equal(expired.isExpired("test"), false, "Test isExpired on item with expiration time.");
+            assert.deepEqual(expired.peek("test"), {value: "foo", timeLeft: 10, isExpired: false}, "Test peek on an item with expiration time.");
             assert.deepEqual(expired.keys(), ["test"], "Make sure keys contain new key with expiration time.");
 
             // now make the first item, the one with expiration, expired
             window._timestamp = 15;
             assert.equal(expired.getTimeLeft("test"), -5, "Test getTimeLeft on item with expiration time that is expired.");
             assert.equal(expired.isExpired("test"), true, "Test isExpired on item with expiration time that is expired.");
+            assert.deepEqual(expired.peek("test"), {value: "foo", timeLeft: -5, isExpired: true}, "Test peek on expired item.");
+            assert.deepEqual(expired.peek("test"), {value: "foo", timeLeft: -5, isExpired: true}, "Test peek again on expired item to make sure it wasn't removed.");
             assert.equal(expired.getItem("test"), null, "Make sure got null on expired item.");
             assert.equal(expired._storage.getItem("test"), null, "Make sure really deleted the expired item from storage.");
+            assert.deepEqual(expired.peek("test"), {value: null, timeLeft: null, isExpired: false}, "Test peek on expired removed item.");
             assert.deepEqual(expired.keys(), [], "Make sure deleted expired item not returned with keys.");
         });
 

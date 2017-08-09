@@ -75,7 +75,7 @@ var item = expiredStorage.getItem("test");
 
 ### Extended API
 
-ExpiredStorage comes with some extra functions:
+ExpiredStorage comes with some extra functions to get data:
 
 ```js
 // get object time to live (in seconds). this will not remove the item, even if expired:
@@ -86,6 +86,9 @@ var isExpired = expiredStorage.isExpired("test");
 
 // get list of keys (if includeExpired is true, will include expired keys that were not yet deleted)
 var keys = expiredStorage.keys(includeExpired);
+
+// will return a dictionary with value, time left, and if expired, without removing the item (even if expired).
+var data = expiredStorage.peek("test");
 ```
 
 Plus, you can update item expiration time without changing its content:
@@ -109,6 +112,18 @@ Or you can just clear everything, including keys that were not created with Expi
 
 ```js
 expiredStorage.clear();
+```
+
+### JSON get / set
+
+ExpiredStorage comes with two nice-to-have functions to quickly set and get JSON values:
+
+```js
+// write 'someObject' as a JSON stringified text with expiration of 60 seconds
+expiredStorage.setJson(key, someObject, 60);
+
+// get value and try to JSON parse it
+var someObject = expiredStorage.getJson(key);
 ```
 
 ### Custom Storage

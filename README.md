@@ -169,6 +169,25 @@ var testStorage = {
 expiredStorage = new ExpiredStorage(testStorage);
 ```
 
+## Troubleshooting
+
+### "ExpiredStorage: No storage base class provided and 'localStorage' is undefined! Please provide a valid base storage class."
+
+If you're getting this error, its most likely because you create an *ExpiredStorage* without providing a storage class, which means it will try to use ```localStorage``` by default, but ```localStorage``` is missing on the platform your running at.
+
+If its an old browser you might need to provide your own storage class or seek localStorage fallback libs to use.
+
+### "ExpiredStorage: Storage class  don't support one or more of the required API functions: getItem, setItem, removeItem or clear."
+
+This happens if the custom storage class you provided does not implement one of the following functions:
+
+- setItem
+- getItem
+- removeItem
+- clear
+
+To solve this just implement the missing function.
+
 ## License
 
 Expired Storage uses the permissive MIT License.
